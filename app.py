@@ -228,8 +228,8 @@ def emergency(username,therapist):
     #####################################################
 
 
-    account_sid = 'AC230f552283d4e701448194d9f7dfad2a'
-    auth_token = 'a791118796b2e878635c10c3aec13dbc'
+    account_sid = os.environ['TWILIO_ACCOUNT_SID']
+    auth_token = os.environ['TWILIO_AUTH_TOKEN']
     client = Client(account_sid, auth_token)
 
     message = client.messages.create(
