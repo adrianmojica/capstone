@@ -36,7 +36,7 @@ class User(db.Model):
 
     
     @classmethod
-    def register(cls,username,password,email,bday,first_name,last_name):
+    def register(cls,username,password,email,bday,first_name,last_name, stage, emergency_contact_email):
         secure = bcrypt.generate_password_hash(password)
         hashed = secure.decode("utf8")
         user = cls(
@@ -45,7 +45,9 @@ class User(db.Model):
             email = email,
             bday = bday,
             first_name = first_name,
-            last_name = last_name
+            last_name = last_name,
+            stage = stage,
+            emergency_contact_email = emergency_contact_email
         )
 
         db.session.add(user)
@@ -68,6 +70,7 @@ class Therapist(db.Model):
     email = db.Column(db.String(50), nullable=False)
     first_name = db.Column(db.String(30), nullable=False)
     last_name = db.Column(db.String(30), nullable=False)
+    
 
     @property
     def full_name(self):
@@ -111,7 +114,11 @@ class Form(db.Model):
         nullable=False,
     )
     date = db.Column(db.String(100), nullable=False)
-    therapist = db.Column(db.String(100), nullable=False)
+    therapist = db.Column(
+        db.String(100),
+        db.ForeignKey('therapists.username'),
+        nullable=False,
+    )
     nrs1 = db.Column(db.Integer(), nullable=False)
     nrs2 = db.Column(db.Integer(), nullable=False)
     nrs3 = db.Column(db.Integer(), nullable=False)
@@ -127,6 +134,7 @@ class Form(db.Model):
     user = db.relationship('User')
     #risk assessment
     is_at_risk = db.Column(db.Boolean(), nullable=False)
+    
 
     
 

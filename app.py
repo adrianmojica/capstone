@@ -1,15 +1,14 @@
 """Feedback Flask app."""
-import os
-from flask import Flask, render_template, redirect, session, jsonify, request
+from flask import Flask, render_template, redirect, session, jsonify, request, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from werkzeug.exceptions import Unauthorized
 import json
-# from sendgrid import SendGridAPIClient
-# from sendgrid.helpers.mail import Mail
+import os
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+from twilio.rest import Client
 from models import connect_db, db, User, Therapist, Form
 from forms import RegisterForm, LoginForm, DeleteForm, AddEntryForm, RegisterTherapistForm
-
-# from forms import RegisterForm, LoginForm, FeedbackForm, DeleteForm
 
 app = Flask(__name__)
 
@@ -44,8 +43,11 @@ def register():
         bday = form.bday.data
         first_name = form.first_name.data
         last_name = form.last_name.data
+        stage = 1
+        emergency_contact_email = form.emergency_contact_email.data
 
-        user = User.register(username, password, email, bday, first_name, last_name)
+
+        user = User.register(username, password, email, bday, first_name, last_name, stage,  emergency_contact_email)
 
         db.session.commit()
         session['username'] = user.username
@@ -198,14 +200,12 @@ def emergency(username,therapist):
     
     user = User.query.get(username)
     therapist = Therapist.query.get(therapist)
-
+    
     to_emails = [
         (user.emergency_contact_email, 'Emergency Contact'),
         (therapist.email, 'Therapist')
     ]
     
-
-
     print("*******EMERGENCY*******")
     message = Mail(
     from_email='adrian@houseofbeards.me',
@@ -221,9 +221,26 @@ def emergency(username,therapist):
         print(response.headers)
     except Exception as e:
         print(e.body)
-    print(message)        
-    return {'message': 'done'}
 
+    
+    #####################################################
+    #             Twilio SMS notification               #
+    #####################################################
+
+
+    account_sid = 'AC230f552283d4e701448194d9f7dfad2a'
+    auth_token = 'a791118796b2e878635c10c3aec13dbc'
+    client = Client(account_sid, auth_token)
+
+    message = client.messages.create(
+        body="Join Earth's mightiest heroes. Like Kevin Bacon.",
+        from_='+18722505272',        
+        to='+17609043999' 
+    ) 
+
+    print(message.sid)
+    flash("Emergency SMS and Email Have been sent, Hang in there!")        
+    return  redirect(f"/users/{username}")
 
 
 @app.route('/users/<username>/form/new', methods=["GET", "POST"])
@@ -254,7 +271,7 @@ def form(username):
 
         entry = Form(
             username = username,
-            therapist = therapist.first_name,
+            therapist = therapist.username,
             date= date,
             nrs1 = nrs1,
             nrs2 = nrs2,
