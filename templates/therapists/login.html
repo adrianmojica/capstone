@@ -1,0 +1,74 @@
+{% extends 'out-base-therapists.html' %}
+
+{% block title %}
+Create User
+{% endblock %}
+
+{% block content %}
+
+
+<div class="container">
+  <!-- Outer Row -->
+  <div class="row justify-content-center">
+
+    <div class="col-xl-10 col-lg-12 col-md-9">
+
+      <div class="card o-hidden border-0 shadow-lg my-5">
+        <div class="card-body p-0">
+          <!-- Nested Row within Card Body -->
+          <div class="row">
+            <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+            <div class="col-lg-6">
+              <div class="p-5">
+                <div class="text-center">
+                  <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
+                </div>
+                <form method="POST">
+
+                  {{form.hidden_tag()}}
+                
+                  {% for field in form.errors %}
+                    <div class="alert alert-danger">{{ field }}:
+                      <ul>
+                        {% for error in form.errors[field] %}
+                          <li>{{ error }}</li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  {% endfor %}
+                
+                  {% for field in form if field.widget.input_type != 'hidden' %}
+                
+                  <div class="form-group">
+                    <div class="col-sm-10">
+                      {{field.label(class="col-sm-12 col-form-label")}}
+                    </div>
+                    <div class="col-sm-10">
+                      {{field(class="form-control")}}
+                    </div>
+                  </div>
+                
+                  {% endfor %}
+                
+                  <button class="btn btn-primary">Login!</button>
+                </form>
+                <hr>
+                <div class="text-center">
+                  <a class="small" href="/register/therapists">Create an Account!</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+
+{% endblock %}
