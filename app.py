@@ -228,17 +228,17 @@ def emergency(username,therapist):
     #####################################################
 
 
-    account_sid = os.environ['TWILIO_ACCOUNT_SID']
-    auth_token = os.environ['TWILIO_AUTH_TOKEN']
+    account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
+    auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
+
     client = Client(account_sid, auth_token)
 
     message = client.messages.create(
-        body="Join Earth's mightiest heroes. Like Kevin Bacon.",
+        body="Client Crisis.",
         from_='+18722505272',        
         to='+17609043999' 
     ) 
 
-    print(message.sid)
     flash("Emergency SMS and Email Have been sent, Hang in there!")        
     return  redirect(f"/users/{username}")
 
