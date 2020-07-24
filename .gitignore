@@ -1,5 +1,4 @@
-sendgrid.env
-twilio.env
+.env
 venv/
 __pycache__
 node_modules/sendgrid.env

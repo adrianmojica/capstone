@@ -9,6 +9,9 @@ from sendgrid.helpers.mail import Mail
 from twilio.rest import Client
 from models import connect_db, db, User, Therapist, Form
 from forms import RegisterForm, LoginForm, DeleteForm, AddEntryForm, RegisterTherapistForm
+import dotenv
+
+
 
 app = Flask(__name__)
 
@@ -228,8 +231,10 @@ def emergency(username,therapist):
     #####################################################
 
 
-    account_sid = os.environ.get('TWILIO_ACCOUNT_SID')
-    auth_token = os.environ.get('TWILIO_AUTH_TOKEN')
+    account_sid = os.getenv('TWILIO_ACCOUNT_SID')
+    
+    auth_token = os.getenv('TWILIO_AUTH_TOKEN')
+  
 
     client = Client(account_sid, auth_token)
 
